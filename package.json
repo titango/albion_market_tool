@@ -1,6 +1,6 @@
 {
   "name": "react-electron",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Simple boilerplate for developing an Electron app with React",
   "author": "willjw3",
   "build": {
@@ -14,6 +14,8 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
+    "@material-ui/icons": "^4.9.1",
+    "axios": "^0.19.2",
     "cross-env": "^6.0.3",
     "electron-is-dev": "^1.1.0",
     "react": "^16.11.0",

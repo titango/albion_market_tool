@@ -5,14 +5,14 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 
 import Home from "./App"
 import Navigator from './components/Navigator'
-import About from "./pages/about"
+import Main from "./pages/Main"
 
 ReactDOM.render(
     <Router>
         <div>
             <main>
-                <Route exact path="/" component={Navigator} />
-                <Route path="/about" component={About} />
+                <Route exact path="/" component={Home} />
+                <Route path="/main" component={Main} />
             </main>
         </div>
     </Router>, 

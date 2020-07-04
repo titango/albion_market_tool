@@ -6,6 +6,11 @@ import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import HomeIcon from '@material-ui/icons/Home';
+import StorefrontIcon from '@material-ui/icons/Storefront';
+import AppBar from '@material-ui/core/AppBar';
+import Typography from '@material-ui/core/Typography';
+import Toolbar from '@material-ui/core/Toolbar';
 
 function setNavigatorWidth() {
   let quarterWidth = window.innerWidth / 4;
@@ -15,26 +20,28 @@ function setNavigatorWidth() {
     else {return quarterWidth;}
   }
 }
-const Navigator = () => {
+const Navigator = ({appTitle, selectedItem, handleListItemClick}) => {
   const [drawerWidth, setDrawerWidth] = useState(setNavigatorWidth());
   const useStyles = makeStyles((theme) => ({
     drawer: {
       width: drawerWidth,
-      flexShrink: 0,
-      maxWidth: 300
+      // flexShrink: 0,
+      maxWidth: 300,
     },
     drawerPaper: {
       width: drawerWidth,
     },
+    appBar: {
+      width: `calc(100% - ${drawerWidth}px)`,
+      marginLeft: drawerWidth,
+    },
   }));
 
   const classes = useStyles();
-  
 
   useEffect(() => {
     window.addEventListener("resize", function() {
       let resizeWins = setNavigatorWidth();
-      console.log("resizeWins: ", resizeWins)
       setDrawerWidth(resizeWins);
     })
   }, [])
@@ -42,7 +49,14 @@ const Navigator = () => {
   console.log(window.innerWidth);
   return(
     <div className="App">
-    <Drawer
+      <AppBar position="fixed" className={classes.appBar}>
+        <Toolbar>
+          <Typography variant="h6" noWrap>
+            {appTitle}
+          </Typography>
+        </Toolbar>
+      </AppBar>
+      <Drawer
         className={classes.drawer}
         variant="permanent"
         classes={{
@@ -50,15 +64,17 @@ const Navigator = () => {
         }}
         anchor="left"
       >
-        <div className={classes.toolbar} />
-        <Divider />
         <List>
-          {['Home'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon></ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button key={'Home'} selected={selectedItem === 0} 
+          onClick={(e) => handleListItemClick(e, 0, 'Home')}>
+            <ListItemIcon><HomeIcon></HomeIcon> </ListItemIcon>
+            <ListItemText primary={'Home'} />
+          </ListItem>
+          <ListItem button key={'Marketplace'} selected={selectedItem === 1}
+          onClick={(e) => handleListItemClick(e, 1, 'Marketplace')}>
+            <ListItemIcon><StorefrontIcon></StorefrontIcon> </ListItemIcon>
+            <ListItemText primary={'Marketplace'} />
+          </ListItem>
         </List>
       </Drawer>
     </div>
