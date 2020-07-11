@@ -1,10 +1,39 @@
 
+.App-cover {
+  opacity: 0.5;
+  position: fixed;
+  width:100%;
+  height:100%;
+  top:0px;
+  left:0px;
+  z-index:-1;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url("albion_wallpaper.jpg");
+}
 
-.App-logo {
-  height: 40vmin;
+.App-header {
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  height: 90vh;
 }
 
 .App-link {
-  color: #FFC107;
+  /* color: #FFC107; */
+  text-decoration: none;
+  width: 155px;
+  margin: auto;
 }
 
+.App-header p{
+  font-size: 3rem;
+  font-weight: 550;
+}
+
+.App-button {
+
+}

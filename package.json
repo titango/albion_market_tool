@@ -1,6 +1,6 @@
 {
   "name": "react-electron",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Simple boilerplate for developing an Electron app with React",
   "author": "willjw3",
   "build": {
