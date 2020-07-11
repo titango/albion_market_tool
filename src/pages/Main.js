@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { makeStyles } from '@material-ui/core/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
@@ -7,6 +7,8 @@ import { Link } from "react-router-dom"
 import "../App.css"
 import Navigator from "../components/Navigator"
 import Marketplace from "./Marketplace";
+import Axios from "axios";
+import config from "../config";
 
 const theme = createMuiTheme({
   palette: {
@@ -32,11 +34,19 @@ const Main = () => {
     const [selectedItem, setSelectedItem] = useState(0);
     const [appTitle, setAppTitle] = useState("Home")
 
-    console.log("Main")
+    console.log("Main.js");
+    useEffect(() => {
+      // Load file first time
+      Axios.get(config.reload_file_list_url).then((v) => {
+        console.log("load file to memory: ", v);
+      })
+    },[])
+
     const handleListItemClick = (event, index, appTitle) => {
       setSelectedItem(index);
       setAppTitle(appTitle);
     }
+
     return (
       <ThemeProvider theme={theme}>
         <div className={classes.root}>
@@ -44,8 +54,13 @@ const Main = () => {
             appTitle={appTitle}
             selectedItem={selectedItem}
             handleListItemClick={handleListItemClick}></Navigator>      
-
-          {(selectedItem == 1) && <Marketplace></Marketplace>}   
+          
+          <Router>
+            <Switch>
+              <Route exact path="/main/marketplace" component={Marketplace}></Route>
+            </Switch>
+          </Router>
+          {/* {(selectedItem == 1) && <Marketplace></Marketplace>}    */}
         </div>
       </ThemeProvider>
     )

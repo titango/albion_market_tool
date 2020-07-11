@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import { Link } from "react-router-dom"
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -35,6 +36,10 @@ const Navigator = ({appTitle, selectedItem, handleListItemClick}) => {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth,
     },
+    noLink: {
+      textDecoration: 'none',
+      color: 'black'
+    }
   }));
 
   const classes = useStyles();
@@ -46,7 +51,6 @@ const Navigator = ({appTitle, selectedItem, handleListItemClick}) => {
     })
   }, [])
 
-  console.log(window.innerWidth);
   return(
     <div className="App">
       <AppBar position="fixed" className={classes.appBar}>
@@ -65,16 +69,19 @@ const Navigator = ({appTitle, selectedItem, handleListItemClick}) => {
         anchor="left"
       >
         <List>
-          <ListItem button key={'Home'} selected={selectedItem === 0} 
+          <Link className={classes.noLink} to="/main"><ListItem button key={'Home'} selected={selectedItem === 0} 
           onClick={(e) => handleListItemClick(e, 0, 'Home')}>
             <ListItemIcon><HomeIcon></HomeIcon> </ListItemIcon>
             <ListItemText primary={'Home'} />
           </ListItem>
+          </Link>
+          <Link className={classes.noLink} to="/main/marketplace">
           <ListItem button key={'Marketplace'} selected={selectedItem === 1}
           onClick={(e) => handleListItemClick(e, 1, 'Marketplace')}>
             <ListItemIcon><StorefrontIcon></StorefrontIcon> </ListItemIcon>
             <ListItemText primary={'Marketplace'} />
           </ListItem>
+          </Link>
         </List>
       </Drawer>
     </div>
