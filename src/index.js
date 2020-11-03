@@ -1,20 +1,24 @@
-import React from 'react';
+import React, {Suspense} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import { HashRouter as Router, Route } from 'react-router-dom'
+import { HashRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Home from "./App"
-import Navigator from './components/Navigator'
-import Main from "./pages/Main"
+
+const Main = React.lazy(() => import('./pages/Main'));
+const Marketplace = React.lazy(() => import('./pages/Marketplace'));
+const CityTrading = React.lazy(() => import('./pages/CityTrading'));
 
 ReactDOM.render(
     <Router>
-        <div>
-            <main>
+        <Suspense fallback={<div>Loading...</div>}> 
+          <Switch>
                 <Route exact path="/" component={Home} />
-                <Route path="/main" component={Main} />
-            </main>
-        </div>
+                <Route exact path="/main" component={Main} />
+                <Route exact path="/main/marketplace" component={Marketplace}></Route>
+                <Route exact path="/main/city_trading" component={CityTrading}></Route>
+            </Switch>
+          </Suspense>
     </Router>, 
     document.getElementById("root")
     

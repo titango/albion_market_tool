@@ -1,5 +1,6 @@
-import React from 'react';
-import { Link } from "react-router-dom"
+import React, {Suspense} from 'react';
+import {Link } from 'react-router-dom';
+
 import logo from './albion.png';
 import './App.css';
 import { Button } from '@material-ui/core';
@@ -16,7 +17,6 @@ function App() {
         
       </header>
       <div className="App-cover"></div>
-      
     </div>
   );
 }
