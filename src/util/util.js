@@ -32,3 +32,25 @@ export const convertDataFromMarketplace = (dataFromApi) => {
 
   return dataReturn;
 }
+
+export const millisecondsToHuman = (duration) => {
+  var seconds = parseInt((duration/1000)%60)
+        , minutes = parseInt((duration/(1000*60))%60)
+        , hours = parseInt((duration/(1000*60*60))%24);
+  var color = "gray";
+  if(hours == 0)
+  {
+    if(minutes > 30)
+    {
+      color = "#b3b300"; // yellow
+    }else {
+      color = "green";
+    }
+  }else if(hours == 1)
+  {
+    color = "orange";
+  }else {
+    color = "red";
+  }
+    return {time: hours + "h" + minutes + "m" + seconds, color: color};
+}

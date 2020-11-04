@@ -8,6 +8,7 @@ const express = require('express');
 const app2 = express();
 const lib = require("./lib");
 const cors = require("cors");
+const { simplifyList } = require("./lib");
 
 let mainWindow;
 function createWindow() {
@@ -38,6 +39,7 @@ app2.use(cors(corsOptions));
 app2.get('/simplify', async (req, res, next) =>   {
   console.log('Simplifying.......');
   const dataRead = await simplifyList();
+  console.log("Success simplifying...");
   return res.jsonp({status: "success"});
 });
 

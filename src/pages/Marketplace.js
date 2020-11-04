@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from "axios";
 
-import database from '../data/local_database';
-import {convertDataFromMarketplace} from '../util/util';
+import {database} from '../data/local_database';
+import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
 
 import CustomThemeProvider from '../components/CustomThemeProvider';
 // import List from '@material-ui/core/List';
@@ -45,7 +45,7 @@ let rows = [
 ];
 
 function marketURL(param){
-  return (`https://www.albion-online-data.com/api/v2/stats/Prices/${param}?locations=Martlock,Thetford,Fort Sterling,Lymhurst,Bridgewatch,Caerleon`)
+  return (`https://www.albion-online-data.com/api/v2/stats/Prices/${param}?locations=Martlock,Thetford,Fort%20Sterling,Lymhurst,Bridgewatch,Caerleon`)
 } 
 
 const orderedCity = [
@@ -59,24 +59,28 @@ const orderedCity = [
 
 const Marketplace = () => {
   const classes = useStyles();
-  const [dataCount, setDataCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [dataDisplay, setDataDisplay] = useState([]);
 
   console.log("Marketplaces.js")
 
   useEffect(() => {
-    console.log("try read");
+    
   },[])
 
   const pullURL = (value) => {
-    if(value != "")
+    if(typeof value != 'undefined' && value && value.name)
     {
+      // console.log("value to search: ", value);
       setIsLoading(true);
-      axios.get(marketURL(value.toLowerCase())
+      axios.get(marketURL(value.name.toLowerCase())
       ).then((data) => {
         setIsLoading(false);
         database.marketplace = convertDataFromMarketplace(data.data);
-        setDataCount(dataCount + 1);
+        // setTimeout(() => {
+          setDataDisplay(database.marketplace);
+        // }, 1000);
+        
       })
     }
   }
@@ -104,7 +108,7 @@ const Marketplace = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {database.marketplace.map((row) => (
+                {dataDisplay.map((row) => (
                   <TableRow key={row.name}>
                     <TableCell component="th" scope="row">
                       {row.name}
@@ -112,9 +116,17 @@ const Marketplace = () => {
                     {
                     orderedCity.map((cityName, orderedIndex) => {
                       let tryFind = row.data.find(((cityData) => cityData.city == cityName));
+                      
+                      
                       if(tryFind){
+
+                        let dateDiff = millisecondsToHuman((new Date()).getTime() - (new Date(tryFind.sell_price_min_date + "Z")).getTime());
+                        
                         return (
-                          <TableCell align="center" key={orderedIndex}>{tryFind.sell_price_min}</TableCell>
+                          <TableCell align="center" key={orderedIndex}>
+                            <p>{tryFind.sell_price_min}</p>
+                            <p style={{'color': dateDiff.color}}>{dateDiff.time} ago</p>
+                          </TableCell>
                         )
                       }else{
                         return (

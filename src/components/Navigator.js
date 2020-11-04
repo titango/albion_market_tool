@@ -1,6 +1,13 @@
 import React, {useState, useEffect, useRef} from 'react';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import { fade, makeStyles,useTheme } from '@material-ui/core/styles';
 import { Link } from "react-router-dom"
+
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import { VariableSizeList } from 'react-window';
+import { Typography } from '@material-ui/core';
+
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -10,13 +17,116 @@ import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import AppBar from '@material-ui/core/AppBar';
-import Typography from '@material-ui/core/Typography';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
-
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import TextField from '@material-ui/core/TextField';
+import parse from 'autosuggest-highlight/parse';
+import match from 'autosuggest-highlight/match';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
+
+
+import {simplified_list} from "../data/local_database";
+
+const useStylesListBox = makeStyles({
+  listbox: {
+    boxSizing: 'border-box',
+    '& ul': {
+      padding: 0,
+      margin: 0,
+    },
+  },
+});
+
+//  VIRTUALIZATION
+const LISTBOX_PADDING = 8; // px
+
+function renderRow(props) {
+  const { data, index, style } = props;
+  return React.cloneElement(data[index], {
+    style: {
+      ...style,
+      top: style.top + LISTBOX_PADDING,
+    },
+  });
+}
+
+const OuterElementContext = React.createContext({});
+
+const OuterElementType = React.forwardRef((props, ref) => {
+  const outerProps = React.useContext(OuterElementContext);
+  return <div ref={ref} {...props} {...outerProps} />;
+});
+
+function useResetCache(data) {
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    if (ref.current != null) {
+      ref.current.resetAfterIndex(0, true);
+    }
+  }, [data]);
+  return ref;
+}
+
+// Adapter for react-window
+const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
+  const { children, ...other } = props;
+  const itemData = React.Children.toArray(children);
+  const theme = useTheme();
+  const smUp = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
+  const itemCount = itemData.length;
+  const itemSize = smUp ? 36 : 48;
+
+  const getChildSize = (child) => {
+    if (React.isValidElement(child) && child.type === ListSubheader) {
+      return 48;
+    }
+
+    return itemSize;
+  };
+
+  const getHeight = () => {
+    if (itemCount > 8) {
+      return 8 * itemSize;
+    }
+    return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
+  };
+
+  const gridRef = useResetCache(itemCount);
+
+  return (
+    <div ref={ref}>
+      <OuterElementContext.Provider value={other}>
+        <VariableSizeList
+          itemData={itemData}
+          height={getHeight() + 2 * LISTBOX_PADDING}
+          width="100%"
+          ref={gridRef}
+          outerElementType={OuterElementType}
+          innerElementType="ul"
+          itemSize={(index) => getChildSize(itemData[index])}
+          overscanCount={5}
+          itemCount={itemCount}
+        >
+          {renderRow}
+        </VariableSizeList>
+      </OuterElementContext.Provider>
+    </div>
+  );
+});
+
+ListboxComponent.propTypes = {
+  children: PropTypes.node,
+};
+
+const renderGroup = (params) => [
+  <ListSubheader key={params.key} component="div">
+    {params.group}
+  </ListSubheader>,
+  params.children,
+];
 
 function setNavigatorWidth() {
   let quarterWidth = window.innerWidth / 4;
@@ -26,7 +136,17 @@ function setNavigatorWidth() {
     else {return quarterWidth;}
   }
 }
+
+const options = simplified_list.map((option) => {
+  const firstLetter = option.local_name.substr(0,1).toUpperCase();
+  return {
+    firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
+    ...option,
+  };
+});
+
 const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
+  
   const inputRef = useRef();
   const [drawerWidth, setDrawerWidth] = useState(setNavigatorWidth());
   const useStyles = makeStyles((theme) => ({
@@ -85,16 +205,33 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
       [theme.breakpoints.up('md')]: {
         width: '20ch',
       },
-    },
+    }
   }));
-
   const classes = useStyles();
+  const classesListBox = useStylesListBox();
 
   useEffect(() => {
     window.addEventListener("resize", function() {
       let resizeWins = setNavigatorWidth();
       setDrawerWidth(resizeWins);
     })
+
+    // Window listen keydown but not sure because need to click from list
+    // if(pullURL)
+    // {
+    //   console.log("addEventListener keydown");
+    //   document.addEventListener("keyup", function (event) { 
+    //     if (event.defaultPrevented) {
+    //       return; // Should do nothing if the default action has been cancelled
+    //     }
+    //     var key = event.key || event.keyCode;
+
+    //     if (key === "Enter"){
+    //       console.log("hit enter;");
+    //       pullURL(inputRef.current.value);
+    //     }
+    //   })
+    // }
   }, [])
 
   return(
@@ -105,11 +242,43 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
             {appTitle}
           </Typography>
           {hasSearch && 
+            
             <div className={classes.search}>
-              <div className={classes.searchIcon}>
+              {/* <div className={classes.searchIcon}>
                 <SearchIcon />
-              </div>
-              <InputBase
+              </div> */}
+              <Autocomplete
+                id="autocomplete-search"
+                style={{ width: 300 }}
+                disableListWrap
+                classes={classesListBox}
+                ListboxComponent={ListboxComponent}
+                renderGroup={renderGroup}
+                options={options.sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter))}
+                groupBy={(option) => option.firstLetter}
+                getOptionLabel={(option) => option.local_name + " (" + option.name + ")"}
+                renderInput={(params) => {
+                  return(<TextField {...params} label="Search" variant="outlined" inputRef={inputRef}/>)
+                }}
+                renderOption={(option, { inputValue }) => {
+                  const matches = match(option.local_name + " (" + option.name + ")", inputValue);
+                  const parts = parse(option.local_name + " (" + option.name + ")", matches);
+          
+                  return (
+                    <div>
+                      {parts.map((part, index) => (
+                        <span key={index} style={{ fontWeight: part.highlight ? 700 : 400 }}>
+                          {part.text}
+                        </span>
+                      ))}
+                    </div>
+                  );
+                }}
+                onChange={(event, newValue) => {
+                  pullURL(newValue)
+                }}
+              />
+              {/* <InputBase
                 placeholder="Search…"
                 classes={{
                   root: classes.inputRoot,
@@ -117,11 +286,11 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
                 }}
                 inputProps={{ 'aria-label': 'search' }}
                 inputRef={inputRef}
-              />
+              /> */}
             </div>
           }
           
-          {pullURL && <Button color="inherit" onClick={() => pullURL(inputRef.current.value)}><CloudDownloadIcon/>&nbsp; Pull data</Button>}
+          {/* {pullURL && <Button color="inherit" onClick={() => pullURL(inputRef.current.value)}><CloudDownloadIcon/>&nbsp; Pull data</Button>} */}
         </Toolbar>
       </AppBar>
       <Drawer
