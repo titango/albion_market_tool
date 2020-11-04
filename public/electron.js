@@ -12,12 +12,18 @@ const { simplifyList } = require("./lib");
 
 let mainWindow;
 function createWindow() {
+    // mainWindow = new BrowserWindow({ 
+    //     width: 1200, 
+    //     height: 800,
+    //     icon: ""
+    // });
+
     mainWindow = new BrowserWindow({ 
-        width: 1200, 
-        height: 800,
-        icon: ""
-    });
-     
+      width: 1500, 
+      height: 800,
+      icon: ""
+  });
+    // mainWindow.setResizable(false);
 
     mainWindow.loadURL(
         isDev

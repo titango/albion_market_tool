@@ -23,7 +23,7 @@ const theme = createMuiTheme({
   },
 });
 
-const CustomThemeProvider = ({children, appTitle, selectedItem, pullURL, hasSearch}) => {
+const CustomThemeProvider = ({children, appTitle, selectedItem, pullURL, hasSearch, clearFunc}) => {
   const classes = useStyles();
 
   return(
@@ -33,7 +33,8 @@ const CustomThemeProvider = ({children, appTitle, selectedItem, pullURL, hasSear
           appTitle={appTitle}
           selectedItem={selectedItem}
           pullURL={pullURL} 
-          hasSearch={hasSearch}></Navigator> 
+          hasSearch={hasSearch}
+          clearFunc={clearFunc}></Navigator> 
 
         {children}
         {/* {(selectedItem == 1) && <Marketplace></Marketplace>}    */}

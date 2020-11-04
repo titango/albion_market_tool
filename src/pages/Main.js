@@ -26,9 +26,9 @@ const Main = () => {
 
     useEffect(() => {
       // Load file first time
-      Axios.get(config.reload_file_list_url).then((v) => {
-        console.log("load file to memory: ", v);
-      })
+      // Axios.get(config.reload_file_list_url).then((v) => {
+      //   console.log("load file to memory: ", v);
+      // })
     },[])
 
     return (

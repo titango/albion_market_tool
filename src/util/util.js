@@ -4,13 +4,13 @@ export const convertDataFromMarketplace = (dataFromApi) => {
   dataFromApi.forEach((v) => {
 
     let tryFound = dataReturn.find((vf) => {
-      return vf.name == v.item_id;
+      return vf.name == (v.item_id).toLowerCase();
     })
 
     if(!tryFound)
     {
       let newObj = {
-        name: v.item_id,
+        name: v.item_id.toLowerCase(),
         data: [{
           city: v.city,
           sell_price_min: v.sell_price_min,
@@ -52,5 +52,5 @@ export const millisecondsToHuman = (duration) => {
   }else {
     color = "red";
   }
-    return {time: hours + "h" + minutes + "m" + seconds, color: color};
+    return {time: hours + "h " + minutes + "m " + seconds + "s", color: color};
 }

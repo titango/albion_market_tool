@@ -19,7 +19,6 @@ import StorefrontIcon from '@material-ui/icons/Storefront';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
-import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import TextField from '@material-ui/core/TextField';
 import parse from 'autosuggest-highlight/parse';
@@ -36,7 +35,7 @@ const useStylesListBox = makeStyles({
     '& ul': {
       padding: 0,
       margin: 0,
-    },
+    }
   },
 });
 
@@ -77,7 +76,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
   const theme = useTheme();
   const smUp = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
   const itemCount = itemData.length;
-  const itemSize = smUp ? 36 : 48;
+  const itemSize = smUp ? 64 : 48;
 
   const getChildSize = (child) => {
     if (React.isValidElement(child) && child.type === ListSubheader) {
@@ -101,7 +100,7 @@ const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) 
       <OuterElementContext.Provider value={other}>
         <VariableSizeList
           itemData={itemData}
-          height={getHeight() + 2 * LISTBOX_PADDING}
+          height={getHeight() + 1.5 * LISTBOX_PADDING}
           width="100%"
           ref={gridRef}
           outerElementType={OuterElementType}
@@ -238,7 +237,7 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
     <div className="App">
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
-          <Typography edge="start" variant="h6" noWrap className={classes.title}> 
+          <Typography edge="start" variant="h6" noWrap> 
             {appTitle}
           </Typography>
           {hasSearch && 
@@ -249,7 +248,7 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
               </div> */}
               <Autocomplete
                 id="autocomplete-search"
-                style={{ width: 300 }}
+                style={{ width: 600 }}
                 disableListWrap
                 classes={classesListBox}
                 ListboxComponent={ListboxComponent}
@@ -290,7 +289,7 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
             </div>
           }
           
-          {/* {pullURL && <Button color="inherit" onClick={() => pullURL(inputRef.current.value)}><CloudDownloadIcon/>&nbsp; Pull data</Button>} */}
+          {/* {clearFunc && <Button color="inherit" onClick={() => clearFunc()}><RotateLeftIcon/>&nbsp; Clear</Button>} */}
         </Toolbar>
       </AppBar>
       <Drawer
