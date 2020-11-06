@@ -6,6 +6,7 @@ const fs = require("fs");
 const isDev = require("electron-is-dev");
 const express = require('express');
 const app2 = express();
+const bodyParser = require('body-parser');
 const lib = require("./lib");
 const cors = require("cors");
 const { simplifyList } = require("./lib");
@@ -41,6 +42,7 @@ var corsOptions = {
 }
 
 app2.use(cors(corsOptions));
+app2.use(bodyParser.json());
 
 app2.get('/simplify', async (req, res, next) =>   {
   console.log('Simplifying.......');
@@ -62,6 +64,16 @@ app2.get('/loadFile', async (req, res, next) =>   {
     readFileMem = tryRead;
   }
   return res.jsonp({status: 'success'});
+});
+
+// WRITE FILE
+// MARKETPLACE
+
+app2.post('/saveFileMarketplace', async (req, res, next) =>   {
+  console.log("file received body: ", req.body);
+  await fs.writeFileSync(path.resolve(__dirname, './marketplace_data.json'), JSON.stringify(req.body.data));
+  
+  res.status(200).jsonp({status: 'success'});
 });
 
 app2.listen(5123, function () {

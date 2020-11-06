@@ -42,7 +42,7 @@ export const millisecondsToHuman = (duration) => {
   {
     if(minutes > 30)
     {
-      color = "#b3b300"; // yellow
+      color = "purple";
     }else {
       color = "green";
     }

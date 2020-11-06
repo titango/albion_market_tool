@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from "axios";
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
-import { Button } from '@material-ui/core';
+import { Button, IconButton } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,9 +11,16 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 import {database} from '../data/local_database';
 import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
+import config from '../config';
 
 import CustomThemeProvider from '../components/CustomThemeProvider';
 // import List from '@material-ui/core/List';
@@ -32,6 +39,21 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     marginTop: 70
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  searchTop: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start'
+  },
+  clearAndSave: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginBottom: '10px'
+  }
 }));
 
 
@@ -69,6 +91,7 @@ const Marketplace = () => {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
   const [dataDisplay, setDataDisplay] = useState([]);
+  const [savedSearch, setSavedSearch] = useState([]);
 
   // console.log("Marketplaces.js")
 
@@ -87,7 +110,6 @@ const Marketplace = () => {
         
         let dataConverted = convertDataFromMarketplace(data.data);
   
-        console.log("database.marketplace: ", database.marketplace);
         let tryFindMarket = database.marketplace.find((v) => {
           let matched = false;
           dataConverted.forEach((dv) => {
@@ -116,16 +138,68 @@ const Marketplace = () => {
     setDataDisplay([]);
   }
 
+  const saveMarketplaceData = (e) => {
+    // e.preventDefault();
+    console.log("dataDisplay: ", dataDisplay);
+    axios.post(config.save_market_list, {data: dataDisplay})
+    .then((v) => {
+      console.log("saved: ", v);
+    })
+  }
+
+  const removeSingleData = (row) => {
+    console.log("remove data row: ", row);
+    let itemIndex = database.marketplace.findIndex((v) => v.name == row.name);
+
+    console.log("itemIndex: ", itemIndex);
+    console.log("db 1: ", database.marketplace);
+    if(itemIndex > -1) //found
+    {
+      database.marketplace.splice(itemIndex, 1);
+
+      console.log("db 2: ", database.marketplace);
+      setDataDisplay([...database.marketplace]);
+
+    }
+  }
+
+  const handleSavedChange = (e) => {
+    e.preventDefault();
+  }
+
   return(
     <CustomThemeProvider appTitle="MarketPlace" selectedItem={1}
       pullURL={pullURL} hasSearch={true} clearFunc={clearData}
       >
         <main className={classes.content}>
         {isLoading && <CircularProgress/>}
-        {!isLoading && 
-          
+
           <div>
-          <Button color="inherit" onClick={() => clearData()}><RotateLeftIcon/>&nbsp; Clear</Button>
+            <div className={classes.searchTop}>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="demo-simple-select-helper-label">Not selected</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={savedSearch}
+                  onChange={handleSavedChange}
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value={10}>Ten</MenuItem>
+                  <MenuItem value={20}>Twenty</MenuItem>
+                  <MenuItem value={30}>Thirty</MenuItem>
+                </Select>
+                <FormHelperText>Saved searched list</FormHelperText>
+              </FormControl>
+              
+              <div className={classes.clearAndSave}>
+                <Button color="inherit" onClick={() => clearData()}><RotateLeftIcon/>&nbsp; Clear</Button>
+                <Button color="inherit" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}>Save current data</Button>
+              </div>
+              
+            </div>
           <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="simple table">
             <colgroup>
@@ -153,6 +227,10 @@ const Marketplace = () => {
                   <TableRow key={row.name}>
                     <TableCell component="th" scope="row">
                       <div style={{'display': 'flex', 'alignItems': 'center'}}>
+                        <IconButton onClick={() => {removeSingleData(row)}}>
+                          <HighlightOffIcon/>
+                        </IconButton>
+                        
                         <img src={iconURL(row.name)} width="45"/>
                         {row.name}
                       </div>
@@ -190,7 +268,6 @@ const Marketplace = () => {
             </Table>
           </TableContainer>
           </div>
-        }
         </main>
       
     </CustomThemeProvider>

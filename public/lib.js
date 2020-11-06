@@ -1,7 +1,7 @@
 const path = require("path");
 const fs = require("fs");
 
-const simplifyList = async function simplifyList() {
+const simplifyList = async function () {
   const data = fs.readFileSync(path.resolve(__dirname, './items.json'),'utf-8');
   if(data)
   {
@@ -20,7 +20,7 @@ const simplifyList = async function simplifyList() {
   }
 }
 
-const readFileList = async function readFileList() {
+const readFileList = async function () {
   const data = fs.readFileSync(path.resolve(__dirname, './items_simplified.json'),'utf-8');
   if (!data) throw data;
   if(data)
