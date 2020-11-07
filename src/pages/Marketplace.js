@@ -17,6 +17,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import SaveIcon from '@material-ui/icons/Save';
+import StopIcon from '@material-ui/icons/Stop';
+import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
 
 import {database} from '../data/local_database';
 import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
@@ -53,6 +56,13 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     width: '100%',
     marginBottom: '10px'
+  },
+  tableHeader: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+    
   }
 }));
 
@@ -121,7 +131,7 @@ const Marketplace = () => {
         if(typeof tryFindMarket == 'undefined')
         {
           dataConverted.forEach((v) => {
-            database.marketplace.push(v);
+            database.marketplace.unshift(v);
           })
         }
         // setTimeout(() => {
@@ -139,7 +149,7 @@ const Marketplace = () => {
   }
 
   const saveMarketplaceData = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     console.log("dataDisplay: ", dataDisplay);
     axios.post(config.save_market_list, {data: dataDisplay})
     .then((v) => {
@@ -177,7 +187,7 @@ const Marketplace = () => {
           <div>
             <div className={classes.searchTop}>
               <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-helper-label">Not selected</InputLabel>
+                <InputLabel shrink id="demo-simple-select-helper-label">Your list</InputLabel>
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
@@ -191,12 +201,12 @@ const Marketplace = () => {
                   <MenuItem value={20}>Twenty</MenuItem>
                   <MenuItem value={30}>Thirty</MenuItem>
                 </Select>
-                <FormHelperText>Saved searched list</FormHelperText>
+                {/* <FormHelperText>Saved searched list</FormHelperText> */}
               </FormControl>
               
               <div className={classes.clearAndSave}>
                 <Button color="inherit" onClick={() => clearData()}><RotateLeftIcon/>&nbsp; Clear</Button>
-                <Button color="inherit" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}>Save current data</Button>
+                <Button color="primary" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}> <SaveIcon/>&nbsp; Save data</Button>
               </div>
               
             </div>
@@ -213,13 +223,13 @@ const Marketplace = () => {
             </colgroup>
               <TableHead>
                 <TableRow>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Name</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Bridgewatch</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Caerleon</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Fort Sterling</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Lymhurst</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Martlock</div></TableCell>
-                  <TableCell><div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>Thetford</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}>Item name</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'orange'}}/>Bridgewatch</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'black'}}/>Caerleon</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopOutlinedIcon style={{'color': 'gray'}}/>Fort Sterling</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'green'}}/>Lymhurst</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'cornflowerblue'}}/>Martlock</div></TableCell>
+                  <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'purple'}}/>Thetford</div></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -228,7 +238,7 @@ const Marketplace = () => {
                     <TableCell component="th" scope="row">
                       <div style={{'display': 'flex', 'alignItems': 'center'}}>
                         <IconButton onClick={() => {removeSingleData(row)}}>
-                          <HighlightOffIcon/>
+                          <HighlightOffIcon style={{'color': 'darkred'}}/>
                         </IconButton>
                         
                         <img src={iconURL(row.name)} width="45"/>
@@ -249,7 +259,7 @@ const Marketplace = () => {
                           <TableCell align="center" key={orderedIndex}>
                             <div style={{'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center'}}>
                               <img src="silver_currency.png"/> 
-                              <span style={{'marginLeft': '10px'}}>{tryFind.sell_price_min}</span>
+                              <span style={{'marginLeft': '10px', 'fontWeight': 'bold'}}>{tryFind.sell_price_min}</span>
                             </div>
                             <p style={{'color': dateDiff.color}}>{dateDiff.time} ago</p>
                           </TableCell>
