@@ -24,6 +24,7 @@ import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
 import {database} from '../data/local_database';
 import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
 import config from '../config';
+import DialogMarketplaceSave from '../components/DialogMarketplaceSave';
 
 import CustomThemeProvider from '../components/CustomThemeProvider';
 // import List from '@material-ui/core/List';
@@ -66,19 +67,6 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-let rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
-
 function marketURL(param){
   return (`https://www.albion-online-data.com/api/v2/stats/Prices/${param}?locations=Martlock,Thetford,Fort%20Sterling,Lymhurst,Bridgewatch,Caerleon`)
 } 
@@ -103,7 +91,9 @@ const Marketplace = () => {
   const [dataDisplay, setDataDisplay] = useState([]);
   const [savedSearch, setSavedSearch] = useState([]);
 
-  // console.log("Marketplaces.js")
+  // Saved
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = React.useState("");
 
   useEffect(() => {
     setDataDisplay(database.marketplace);
@@ -134,10 +124,8 @@ const Marketplace = () => {
             database.marketplace.unshift(v);
           })
         }
-        // setTimeout(() => {
-          setDataDisplay(database.marketplace);
-          setIsLoading(false);
-        // },1000)
+        setDataDisplay(database.marketplace);
+        setIsLoading(false);
         
       })
     }
@@ -151,10 +139,11 @@ const Marketplace = () => {
   const saveMarketplaceData = (e) => {
     e.preventDefault();
     console.log("dataDisplay: ", dataDisplay);
-    axios.post(config.save_market_list, {data: dataDisplay})
-    .then((v) => {
-      console.log("saved: ", v);
-    })
+    // axios.post(config.save_market_list, {data: dataDisplay})
+    // .then((v) => {
+    //   console.log("saved: ", v);
+    // })
+    setOpen(true);
   }
 
   const removeSingleData = (row) => {
@@ -169,12 +158,17 @@ const Marketplace = () => {
 
       console.log("db 2: ", database.marketplace);
       setDataDisplay([...database.marketplace]);
-
     }
   }
 
   const handleSavedChange = (e) => {
     e.preventDefault();
+  }
+
+  const handleClosedDialog = (value) => {
+    console.log("handle closed dialog: ", value);
+    setOpen(false);
+    setSelectedValue(value);
   }
 
   return(
@@ -277,6 +271,9 @@ const Marketplace = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <DialogMarketplaceSave selectedValue={selectedValue} open={open} 
+          listItems={[]}
+          onClose={handleClosedDialog} />
           </div>
         </main>
       
