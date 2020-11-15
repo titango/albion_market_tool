@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
+import { Button, IconButton, TextField } from '@material-ui/core';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,6 +22,10 @@ const useStyles = makeStyles({
     backgroundColor: blue[100],
     color: blue[600],
   },
+  divNewList: {
+    margin: 'auto',
+    marginBottom: '20px'
+  }
 });
 
 const DialogMarketplaceSave = (props) => {
@@ -26,6 +33,7 @@ const DialogMarketplaceSave = (props) => {
   const { onClose, listItems, selectedValue, open } = props;
 
   const [openAddNew, setOpenAddNew] = useState(false);
+  const [newList, setNewList] = useState("");
 
   const handleClose = () => {
     onClose(selectedValue);
@@ -35,6 +43,16 @@ const DialogMarketplaceSave = (props) => {
     setOpenAddNew(true);
     onClose(value);
   };
+
+  const handleCloseAddDialog = (bool) => {
+    if(!bool){
+      setOpenAddNew(false);
+    }else {
+      setOpenAddNew(false);
+      onClose(newList);
+    }
+
+  }
 
   return(
     <React.Fragment>
@@ -62,9 +80,25 @@ const DialogMarketplaceSave = (props) => {
           </ListItem>
         </List>
       </Dialog>
-      <Dialog open={openAddNew}>
-          
+      <Dialog open={openAddNew} onClose={handleCloseAddDialog}
+      disableBackdropClick={true}>
+        <DialogTitle id="new-list-dialog-title">Add new marketplace list
+        </DialogTitle>
+        <DialogContent>
+          <div className={classes.divNewList}>
+            <TextField label="New list" variant="outlined" onChange={(v) => setNewList(v.target.value)} />
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => handleCloseAddDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => handleCloseAddDialog(true)} color="primary" autoFocus>
+            Add
+          </Button>
+        </DialogActions>
       </Dialog>
+      
     </React.Fragment>
   )
 }
