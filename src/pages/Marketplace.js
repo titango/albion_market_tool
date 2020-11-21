@@ -90,7 +90,7 @@ const Marketplace = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [dataDisplay, setDataDisplay] = useState([]);
   const [savedSearch, setSavedSearch] = useState([]);
-
+  
   // Saved
   const [open, setOpen] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState("");
@@ -169,6 +169,7 @@ const Marketplace = () => {
     console.log("handle closed dialog: ", value);
     setOpen(false);
     setSelectedValue(value);
+    
   }
 
   return(

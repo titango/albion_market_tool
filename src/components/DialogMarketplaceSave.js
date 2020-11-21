@@ -16,6 +16,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import DescriptionIcon from '@material-ui/icons/Description';
+import Snackbar from '@material-ui/core/Snackbar';
 
 const useStyles = makeStyles({
   avatar: {
@@ -32,6 +33,7 @@ const DialogMarketplaceSave = (props) => {
   const classes = useStyles();
   const { onClose, listItems, selectedValue, open } = props;
 
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [openAddNew, setOpenAddNew] = useState(false);
   const [newList, setNewList] = useState("");
 
@@ -50,9 +52,17 @@ const DialogMarketplaceSave = (props) => {
     }else {
       setOpenAddNew(false);
       onClose(newList);
+      setSnackBarOpen(true);
+    }
+  }
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
     }
 
-  }
+    setSnackBarOpen(false);
+  };
 
   return(
     <React.Fragment>
@@ -98,6 +108,14 @@ const DialogMarketplaceSave = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+        open={snackBarOpen}
+        autoHideDuration={3000}
+        message="Saved successfully"
+        onClose={handleCloseSnackbar}
+        >
+      </Snackbar>
       
     </React.Fragment>
   )
