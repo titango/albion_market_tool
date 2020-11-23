@@ -16,7 +16,7 @@ import AddIcon from '@material-ui/icons/Add';
 import Typography from '@material-ui/core/Typography';
 import { blue } from '@material-ui/core/colors';
 import DescriptionIcon from '@material-ui/icons/Description';
-import Snackbar from '@material-ui/core/Snackbar';
+
 
 const useStyles = makeStyles({
   avatar: {
@@ -29,11 +29,10 @@ const useStyles = makeStyles({
   }
 });
 
-const DialogMarketplaceSave = (props) => {
+const DialogMarketplaceSave = ({listItems, ...props}) => {
   const classes = useStyles();
-  const { onClose, listItems, selectedValue, open } = props;
+  const { onClose, selectedValue, open } = props;
 
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [openAddNew, setOpenAddNew] = useState(false);
   const [newList, setNewList] = useState("");
 
@@ -42,8 +41,14 @@ const DialogMarketplaceSave = (props) => {
   };
 
   const handleListItemClick = (value) => {
-    setOpenAddNew(true);
-    onClose(value);
+    
+
+    if(value != "./#addAccount") // unique add account
+    {
+      onClose(value);
+    }else{
+      setOpenAddNew(true);
+    }
   };
 
   const handleCloseAddDialog = (bool) => {
@@ -52,17 +57,9 @@ const DialogMarketplaceSave = (props) => {
     }else {
       setOpenAddNew(false);
       onClose(newList);
-      setSnackBarOpen(true);
+      
     }
   }
-
-  const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
-
-    setSnackBarOpen(false);
-  };
 
   return(
     <React.Fragment>
@@ -80,7 +77,7 @@ const DialogMarketplaceSave = (props) => {
             </ListItem>
           ))}
 
-          <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
+          <ListItem autoFocus button onClick={() => handleListItemClick('./#addAccount')}>
             <ListItemAvatar>
               <Avatar>
                 <AddIcon />
@@ -108,14 +105,6 @@ const DialogMarketplaceSave = (props) => {
           </Button>
         </DialogActions>
       </Dialog>
-
-      <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}}
-        open={snackBarOpen}
-        autoHideDuration={3000}
-        message="Saved successfully"
-        onClose={handleCloseSnackbar}
-        >
-      </Snackbar>
       
     </React.Fragment>
   )

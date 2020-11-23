@@ -20,6 +20,7 @@ import Select from '@material-ui/core/Select';
 import SaveIcon from '@material-ui/icons/Save';
 import StopIcon from '@material-ui/icons/Stop';
 import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import {database} from '../data/local_database';
 import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
@@ -88,23 +89,31 @@ const orderedCity = [
 const Marketplace = () => {
   const classes = useStyles();
   const [isLoading, setIsLoading] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [dataDisplay, setDataDisplay] = useState([]);
-  const [savedSearch, setSavedSearch] = useState([]);
+  const [savedSearch, setSavedSearch] = useState("");
+  const [savedSearchList, setSavedSearchList] = useState([]);
   
   // Saved
   const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = React.useState("");
+  const [selectedValue, setSelectedValue] = useState("");
 
   useEffect(() => {
     setDataDisplay(database.marketplace);
+    axios.post(config.load_market_list)
+    .then((v) => {
+      console.log("saved list return: ", v);
+      setSavedSearchList(v.data.data);
+    })
   },[])
 
-  const pullURL = (value) => {
+  const pullURL = async (value) => {
+    console.log("pullURL: ", value);
     if(typeof value != 'undefined' && value && value.name)
     {
       // console.log("value to search: ", value);
       setIsLoading(true);
-      axios.get(marketURL(value.name.toLowerCase())
+      await axios.get(marketURL(value.name.toLowerCase())
       ).then((data) => {
         console.log("data got: ", data);
         
@@ -126,7 +135,7 @@ const Marketplace = () => {
         }
         setDataDisplay(database.marketplace);
         setIsLoading(false);
-        
+        return Promise.resolve(1);
       })
     }
   }
@@ -134,15 +143,12 @@ const Marketplace = () => {
   const clearData = () => {
     database.marketplace = [];
     setDataDisplay([]);
+    setSavedSearch("");
   }
 
   const saveMarketplaceData = (e) => {
     e.preventDefault();
     console.log("dataDisplay: ", dataDisplay);
-    // axios.post(config.save_market_list, {data: dataDisplay})
-    // .then((v) => {
-    //   console.log("saved: ", v);
-    // })
     setOpen(true);
   }
 
@@ -161,16 +167,44 @@ const Marketplace = () => {
     }
   }
 
-  const handleSavedChange = (e) => {
-    e.preventDefault();
+  const handleSavedChange = async (e) => {
+    let value = e.target.value;
+    setSavedSearch(value);
+
+    let findInSavedList = savedSearchList.find((v) => v.name == value);
+
+    if(typeof findInSavedList != 'undefined')
+    {
+      database.marketplace = [];
+      for(var i =0; i < findInSavedList.data.length; i++)
+      {
+        let v = findInSavedList.data[i];
+        await pullURL(v);
+      }
+    }
   }
 
   const handleClosedDialog = (value) => {
     console.log("handle closed dialog: ", value);
     setOpen(false);
-    setSelectedValue(value);
-    
+
+    if(value)
+    {
+      axios.post(config.save_market_list, {name: value, data: dataDisplay})
+      .then((v) => {
+        setSnackBarOpen(true);
+      })
+      setSelectedValue(value);
+    }
   }
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackBarOpen(false);
+  };
 
   return(
     <CustomThemeProvider appTitle="MarketPlace" selectedItem={1}
@@ -182,19 +216,22 @@ const Marketplace = () => {
           <div>
             <div className={classes.searchTop}>
               <FormControl className={classes.formControl}>
-                <InputLabel shrink id="demo-simple-select-helper-label">Your list</InputLabel>
+                <InputLabel shrink id="demo-simple-select-helper-label">Saved list</InputLabel>
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
                   value={savedSearch}
                   onChange={handleSavedChange}
                 >
-                  <MenuItem value="">
-                    <em>None</em>
-                  </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {
+                    savedSearchList.map((savedItem, ind) => {
+                      return(
+                        <MenuItem value={savedItem.name} key={ind}>
+                          <em>{savedItem.name}</em>
+                        </MenuItem>
+                      )    
+                    })
+                  }
                 </Select>
                 {/* <FormHelperText>Saved searched list</FormHelperText> */}
               </FormControl>
@@ -272,9 +309,19 @@ const Marketplace = () => {
               </TableBody>
             </Table>
           </TableContainer>
-          <DialogMarketplaceSave selectedValue={selectedValue} open={open} 
-          listItems={[]}
+          <DialogMarketplaceSave
+          selectedValue={selectedValue} 
+          open={open} 
+          listItems={savedSearchList}
           onClose={handleClosedDialog} />
+
+          <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+          open={snackBarOpen}
+          autoHideDuration={3000}
+          message="Saved successfully"
+          onClose={handleCloseSnackbar}
+          >
+      </Snackbar>
           </div>
         </main>
       

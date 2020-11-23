@@ -71,9 +71,48 @@ app2.get('/loadFile', async (req, res, next) =>   {
 
 app2.post('/saveFileMarketplace', async (req, res, next) =>   {
   console.log("file received body: ", req.body);
-  await fs.writeFileSync(path.resolve(__dirname, './marketplace_data.json'), JSON.stringify(req.body.data));
-  
+
+  let requestName = req.body.name;
+  let requestData = req.body.data;
+  let marketPath = './marketplace_data.json';
+
+  let JsonData = []; // in case no file
+  let writeNew = false;
+
+  const fileData = fs.readFileSync(path.resolve(__dirname, marketPath),'utf-8');
+  if(fileData)
+  {
+    JsonData = JSON.parse(fileData);
+    let findElement = JsonData.find((v) => v.name == requestName);
+    if(typeof findElement != 'undefined')
+    {
+      findElement.data = requestData;
+    }else{
+      writeNew = true;
+    }
+  }else { // Just write new
+    writeNew = true;
+  }
+
+  if(writeNew)
+  {
+    JsonData.push({name: requestName, data: requestData});
+  }
+
+  await fs.writeFileSync(path.resolve(__dirname, marketPath), JSON.stringify(JsonData));
   res.status(200).jsonp({status: 'success'});
+});
+
+app2.post('/loadFileMarketplace', async(req, res, next) => {
+  let marketPath = './marketplace_data.json';
+  const fileData = fs.readFileSync(path.resolve(__dirname, marketPath),'utf-8');
+  let JsonData = [];
+  if(fileData)
+  {
+    JsonData = JSON.parse(fileData);
+  }
+  
+  res.status(200).jsonp({data: JsonData});
 });
 
 app2.listen(5123, function () {
