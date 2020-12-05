@@ -21,6 +21,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import StopIcon from '@material-ui/icons/Stop';
 import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
 import Snackbar from '@material-ui/core/Snackbar';
+import Navigator from "../components/Navigator"
 
 import {database} from '../data/local_database';
 import {convertDataFromMarketplace, millisecondsToHuman} from '../util/util';
@@ -40,24 +41,29 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "white",
     padding: theme.spacing(3),
     marginTop: 70
   },
   formControl: {
     margin: theme.spacing(1),
-    minWidth: 120,
+    minWidth: "200px",
   },
   searchTop: {
     display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start'
+    flexDirection: 'row',
+    alignItems: 'space-between'
   },
   clearAndSave: {
+    flex: 1,
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     width: '100%',
-    marginBottom: '10px'
+    marginBottom: '10px',
+    alignItems: 'center',
+    saveBtn: {
+      maxHeight: '40px'
+    }
   },
   tableHeader: {
     display: 'flex',
@@ -207,9 +213,12 @@ const Marketplace = () => {
   };
 
   return(
-    <CustomThemeProvider appTitle="MarketPlace" selectedItem={1}
-      pullURL={pullURL} hasSearch={true} clearFunc={clearData}
-      >
+    <CustomThemeProvider>
+        <Navigator 
+          appTitle="MarketPlace" selectedItem={1}
+          pullURL={pullURL} hasSearch={true}>
+            
+        </Navigator> 
         <main className={classes.content}>
         {isLoading && <CircularProgress/>}
 
@@ -237,8 +246,8 @@ const Marketplace = () => {
               </FormControl>
               
               <div className={classes.clearAndSave}>
+                <Button className={classes.clearAndSave.saveBtn} color="primary" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}> <SaveIcon/>&nbsp; Save data</Button>
                 <Button color="inherit" onClick={() => clearData()}><RotateLeftIcon/>&nbsp; Clear</Button>
-                <Button color="primary" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}> <SaveIcon/>&nbsp; Save data</Button>
               </div>
               
             </div>
@@ -321,7 +330,7 @@ const Marketplace = () => {
           message="Saved successfully"
           onClose={handleCloseSnackbar}
           >
-      </Snackbar>
+          </Snackbar>
           </div>
         </main>
       

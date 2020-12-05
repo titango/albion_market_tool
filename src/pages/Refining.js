@@ -5,23 +5,26 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
+import CustomThemeProvider from '../components/CustomThemeProvider';
+import Navigator from '../components/Navigator';
+
 const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1
   },
   content: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: "white",
     padding: theme.spacing(3),
     marginTop: 70
   },
 }));
 
-const CityTrading = () => {
+const Refining = () => {
   const classes = useStyles();
   const [dataList, setDataList] = useState([]);
 
-  console.log("Marketplaces.js")
+  console.log("Refining.js")
 
   useEffect(() => {
     console.log("try read");
@@ -29,20 +32,14 @@ const CityTrading = () => {
   },[])
 
   return(
-    <main className={classes.content}>
-      <div>
-        <List>
-          {
-            <ListItem button>
-            <ListItemIcon>
-            </ListItemIcon>
-            <ListItemText primary="Inbox" />
-          </ListItem>
-          }
-        </List>
-      </div>
-    </main>
+    <CustomThemeProvider >
+      <Navigator appTitle="Refining" selectedItem={2}
+      hasSearch={false}></Navigator>
+        <main className={classes.content}>
+
+        </main>
+    </CustomThemeProvider>
   )
 }
 
-export default CityTrading;
+export default Refining;

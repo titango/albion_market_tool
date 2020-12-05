@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import { makeStyles } from '@material-ui/core/styles';
-import Navigator from "../components/Navigator"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,19 +22,20 @@ const theme = createMuiTheme({
   },
 });
 
-const CustomThemeProvider = ({children, appTitle, selectedItem, pullURL, hasSearch, clearFunc}) => {
+/**
+ * 
+ * @props appTitle - Title bar
+ * @props selectedItem - the order of highlighted item from the navigator
+ * @props pullURL - the URL to pull when click on search
+ * @props hasSearch - Search bar display or not
+ * @props clearFunc - Clear search function
+ */
+const CustomThemeProvider = ({children}) => {
   const classes = useStyles();
 
   return(
     <ThemeProvider theme={theme}>
       <div className={classes.root}>
-        <Navigator 
-          appTitle={appTitle}
-          selectedItem={selectedItem}
-          pullURL={pullURL} 
-          hasSearch={hasSearch}
-          clearFunc={clearFunc}></Navigator> 
-
         {children}
         {/* {(selectedItem == 1) && <Marketplace></Marketplace>}    */}
       </div>

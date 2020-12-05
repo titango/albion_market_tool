@@ -16,6 +16,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
 import StorefrontIcon from '@material-ui/icons/Storefront';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Button } from '@material-ui/core';
@@ -25,6 +26,7 @@ import parse from 'autosuggest-highlight/parse';
 import match from 'autosuggest-highlight/match';
 import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 
 
 import {simplified_list} from "../data/local_database";
@@ -144,7 +146,7 @@ const options = simplified_list.map((option) => {
   };
 });
 
-const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
+const Navigator = ({children, appTitle, selectedItem, pullURL, hasSearch}) => {
   
   const inputRef = useRef();
   const [drawerWidth, setDrawerWidth] = useState(setNavigatorWidth());
@@ -233,6 +235,10 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
     // }
   }, [])
 
+  const clearSearch = () => {
+
+  }
+
   return(
     <div className="App">
       <AppBar position="fixed" className={classes.appBar}>
@@ -262,7 +268,7 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
                 renderOption={(option, { inputValue }) => {
                   const matches = match(option.local_name + " (" + option.name + ")", inputValue);
                   const parts = parse(option.local_name + " (" + option.name + ")", matches);
-          
+                  
                   return (
                     <div>
                       {parts.map((part, index) => (
@@ -289,7 +295,7 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
             </div>
           }
           
-          {/* {clearFunc && <Button color="inherit" onClick={() => clearFunc()}><RotateLeftIcon/>&nbsp; Clear</Button>} */}
+          {/* {clearSearch && <Button color="inherit" onClick={() => clearSearch()}><RotateLeftIcon/>&nbsp; Submit</Button>} */}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -314,6 +320,14 @@ const Navigator = ({appTitle, selectedItem, pullURL, hasSearch}) => {
               <ListItemText primary={'Marketplace'} />
             </ListItem>
           </Link>
+
+          <Link className={classes.noLink} to="/main/refining">
+            <ListItem button key={'Marketplace'} selected={selectedItem === 2}>
+              <ListItemIcon><AccountTreeIcon></AccountTreeIcon> </ListItemIcon>
+              <ListItemText primary={'Refining'} />
+            </ListItem>
+          </Link>
+          
           
         </List>
       </Drawer>
