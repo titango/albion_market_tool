@@ -17,7 +17,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import SaveIcon from '@material-ui/icons/Save';
+import BookmarkIcon from '@material-ui/icons/Bookmark';
 import StopIcon from '@material-ui/icons/Stop';
 import StopOutlinedIcon from '@material-ui/icons/StopOutlined';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -70,7 +70,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center'
-    
+  },
+  tableHeaderRow: {
+    backgroundColor: 'ghostwhite'
   }
 }));
 
@@ -204,6 +206,18 @@ const Marketplace = () => {
     }
   }
 
+  const handleRemoveListItem = (items) => {
+    console.log("items: ", items);
+
+    if(items && items.name)
+    {
+      axios.post(config.remove_item_market_list, items)
+      .then((v) => {
+        setSnackBarOpen(true);
+      })
+    }
+  }
+
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway') {
       return;
@@ -225,7 +239,7 @@ const Marketplace = () => {
           <div>
             <div className={classes.searchTop}>
               <FormControl className={classes.formControl}>
-                <InputLabel shrink id="demo-simple-select-helper-label">Saved list</InputLabel>
+                <InputLabel shrink id="demo-simple-select-helper-label">Saved bookmarks</InputLabel>
                 <Select
                   labelId="demo-simple-select-helper-label"
                   id="demo-simple-select-helper"
@@ -242,11 +256,12 @@ const Marketplace = () => {
                     })
                   }
                 </Select>
+
                 {/* <FormHelperText>Saved searched list</FormHelperText> */}
               </FormControl>
               
               <div className={classes.clearAndSave}>
-                <Button className={classes.clearAndSave.saveBtn} color="primary" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}> <SaveIcon/>&nbsp; Save data</Button>
+                <Button className={classes.clearAndSave.saveBtn} color="primary" variant="contained" onClick={(e) => {saveMarketplaceData(e)}}> <BookmarkIcon/>&nbsp; Bookmarks</Button>
                 <Button color="inherit" onClick={() => clearData()}><RotateLeftIcon/>&nbsp; Clear</Button>
               </div>
               
@@ -263,7 +278,7 @@ const Marketplace = () => {
                 <col width="11%" />
             </colgroup>
               <TableHead>
-                <TableRow>
+                <TableRow className={classes.tableHeaderRow}>
                   <TableCell><div className={classes.tableHeader}>Item name</div></TableCell>
                   <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'orange'}}/>Bridgewatch</div></TableCell>
                   <TableCell><div className={classes.tableHeader}><StopIcon style={{'color': 'black'}}/>Caerleon</div></TableCell>
@@ -322,6 +337,7 @@ const Marketplace = () => {
           selectedValue={selectedValue} 
           open={open} 
           listItems={savedSearchList}
+          removeListItem={handleRemoveListItem}
           onClose={handleClosedDialog} />
 
           <Snackbar anchorOrigin={{vertical: 'top', horizontal: 'center'}}

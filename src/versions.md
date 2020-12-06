@@ -1,7 +1,9 @@
-## Version 0.1.6
+## Version 0.1.7
 - Reworked layout for Marketplace
 - Added versions to Homepage
 - Added blank page for Refining section
+- Changed 'List' in Marketplace to 'Bookmark'
+  - Added function to remove a bookmark item and save again
 
 ## Version 0.1.5
 - Added save and display features in Marketplace

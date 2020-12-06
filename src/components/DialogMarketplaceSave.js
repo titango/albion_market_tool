@@ -10,6 +10,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import AddIcon from '@material-ui/icons/Add';
@@ -29,7 +32,7 @@ const useStyles = makeStyles({
   }
 });
 
-const DialogMarketplaceSave = ({listItems, ...props}) => {
+const DialogMarketplaceSave = ({listItems, removeListItem, ...props}) => {
   const classes = useStyles();
   const { onClose, selectedValue, open } = props;
 
@@ -64,7 +67,7 @@ const DialogMarketplaceSave = ({listItems, ...props}) => {
   return(
     <React.Fragment>
       <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
-        <DialogTitle id="simple-dialog-title">Your market list</DialogTitle>
+        <DialogTitle id="simple-dialog-title">Your bookmark list</DialogTitle>
         <List>
           {listItems.map((items) => (
             <ListItem button onClick={() => handleListItemClick(items.name)} key={items.name}>
@@ -74,6 +77,11 @@ const DialogMarketplaceSave = ({listItems, ...props}) => {
                 </Avatar>
               </ListItemAvatar>
               <ListItemText primary={items.name} />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="delete" onClick={() => removeListItem(items)}>
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
           ))}
 
@@ -83,7 +91,7 @@ const DialogMarketplaceSave = ({listItems, ...props}) => {
                 <AddIcon />
               </Avatar>
             </ListItemAvatar>
-            <ListItemText primary="Add account" />
+            <ListItemText primary="Add new bookmark" />
           </ListItem>
         </List>
       </Dialog>

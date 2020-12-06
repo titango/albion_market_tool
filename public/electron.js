@@ -105,13 +105,33 @@ app2.post('/saveFileMarketplace', async (req, res, next) =>   {
 
 app2.post('/loadFileMarketplace', async(req, res, next) => {
   let marketPath = './marketplace_data.json';
+
   const fileData = fs.readFileSync(path.resolve(__dirname, marketPath),'utf-8');
   let JsonData = [];
   if(fileData)
   {
     JsonData = JSON.parse(fileData);
   }
+  res.status(200).jsonp({data: JsonData});
+});
+
+app2.post('/removeItemMarketplace', async(req, res, next) => {
+  let marketPath = './marketplace_data.json';
+  let requestName = req.body.name;
+  const fileData = fs.readFileSync(path.resolve(__dirname, marketPath),'utf-8');
+  let JsonData = [];
+  if(fileData)
+  {
+    JsonData = JSON.parse(fileData);
+  }
+
+  let tryFindIndex = JsonData.findIndex((v) => requestName == v.name);
+  if(tryFindIndex >= 0)
+  {
+    JsonData.splice(tryFindIndex, 1);
+  }
   
+  await fs.writeFileSync(path.resolve(__dirname, marketPath), JSON.stringify(JsonData));
   res.status(200).jsonp({data: JsonData});
 });
 
