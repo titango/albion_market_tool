@@ -1,6 +1,6 @@
 # Albion Online Market Tool (AOMT)
 
-<img src="https://assets.albiononline.com/assets/images/header/logo.svg?cb=42" width="200" height="200" />
+<img src="https://i.imgur.com/jJUWrVS.png" width="300" height="200" />
 
 
 Albion Online Market Tool (AOMT) is a community software which aims to provide all possible tools for crafters and traders to benefit from their professions in Albion Online game. The project is written in Electron, cross-platform desktop app. Data is provided by [Albion Data Project]. 
